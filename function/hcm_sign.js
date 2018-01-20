@@ -73,7 +73,15 @@ function httpPost(body, op) {
     })
 }
 
-async function signIn() {
+async function signIn(cookie) {
+
+    if(cookie){
+        Object.assign(options,{
+            headers: Object.assign(options.headers,{
+                'Cookie': cookie
+            })
+        })
+    }
 
     console.log("signIn")
     let check = await httpPost(body);
@@ -130,7 +138,9 @@ async function signIn() {
 //     return 1
 // }
 
-signIn()
+module.exports = {
+    signIn,
+}
 // hcmLogin("18678868693","123456").then( (t) => {
 //     console.log(t);
 //     signIn()
