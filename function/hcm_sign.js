@@ -53,7 +53,7 @@ function httpPost(body, op) {
     return new Promise( (resolve, reject) => {
         https.request(op || options, (res) => {
 
-            // console.log(`STATUS: ${res.statusCode}`);
+            console.log(`STATUS: ${res.statusCode}`);
             // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
 
 
@@ -68,6 +68,8 @@ function httpPost(body, op) {
             res.on('end', () => {
                 if(res.statusCode == 200)
                     resolve(JSON.parse(r.join('')));
+                else
+                    console.log(JSON.parse(r.join('')));
             })
         }).write(typeof body === 'object' ? JSON.stringify(body): body)
     })
