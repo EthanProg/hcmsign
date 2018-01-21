@@ -100,7 +100,6 @@ async function signIn(cookie) {
         })
     })
 
-    // console.log("signIn")
     let check = await httpPost(b, op);
 
     console.log(check);
@@ -136,36 +135,9 @@ async function signIn(cookie) {
 }
 
 
-// async function hcmLogin(user, pass) {
-//     let body = `mobile=${user}&password=${pass}`
-//     const op = JSON.parse(JSON.stringify(options))
-//     Object.assign(op,{
-//         path: '/login',
-//         headers: Object.assign(options.headers,{
-//             'Content-Type':'application/x-www-form-urlencoded',
-//             'Content-Length': Buffer.byteLength(body)
-//         })
-//     })
-//
-//     let cookie = await httpPost(body, op);
-//
-//     Object.assign(options,{
-//         headers: Object.assign(options.headers,{
-//             'Cookie': cookie
-//         })
-//     })
-//
-//     // console.log(options);
-//     return 1
-// }
-
 module.exports = {
     signIn,
 }
-// hcmLogin("18678868693","123456").then( (t) => {
-//     console.log(t);
-//     signIn()
-// })
 
 
 
