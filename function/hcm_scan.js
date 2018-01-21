@@ -1,4 +1,4 @@
-
+'use strict'
 
 const scanUrl = 'https://wx.hcmcloud.cn/authorizer_pc?appid=wx56b5ebcd0c7759e2&redirect=https%3A%2F%2Fwx56b5ebcd0c7759e2.hcmcloud.cn%2Flogin%3Fsso%3Dwechatcomponent%26is_sso_return%3D1%26func%3DSSO'
 
@@ -11,34 +11,43 @@ const fs = require('fs')
 
 const {signIn} = require('./hcm_sign')
 
-let client_id
+// let client_id
 
-https.get(scanUrl, res => {
-    res.setEncoding('utf8');
-    let r = [];
-    res.on('data', trunk => {
-        r.push(trunk)
+function getScanImage() {
+    return new Promise((resolve, reject) => {
+        https.get(scanUrl, res => {
+            res.setEncoding('utf8');
+            let r = [];
+            res.on('data', trunk => {
+                r.push(trunk)
+            })
+            res.on('end', () => {
+                r = r.join('');
+                let client_id = r.match(/client_id=(.+)\"/)[1];
+                let img = r.match(/<img src=\"(.+)\"/)[1];
+                console.log(img)
+
+                resolve({
+                    client_id,
+                    img
+                })
+
+                // module.client_id = client_id
+                // var base64Data = img.replace(/^data:image\/\w+;base64,/, "");
+                // var dataBuffer = new Buffer(base64Data, 'base64');
+                // fs.writeFile("image.png", dataBuffer, function (err) {
+                //     if (err) {
+                //         console.log(err);
+                //         ;
+                //     } else {
+                //         console.log("保存成功！");
+                //         ;
+                //     }
+                // });
+            })
+        })
     })
-    res.on('end', () => {
-        // if(res.statusCode == 200)
-        //     resolve(JSON.parse(r.join('')));
-
-        r = r.join('');
-        client_id = r.match(/client_id=(.+)\"/)[1];
-        let img = r.match(/<img src=\"(.+)\"/)[1];
-        console.log(img)
-
-        var base64Data = img.replace(/^data:image\/\w+;base64,/, "");
-        var dataBuffer = new Buffer(base64Data, 'base64');
-        fs.writeFile("image.png", dataBuffer, function(err) {
-            if(err){
-                console.log(err);;
-            }else{
-                console.log("保存成功！");;
-            }
-        });
-    })
-})
+}
 
 function getCode(url) {
     return new Promise((resolve, reject) => {
@@ -61,23 +70,23 @@ function getCode(url) {
 }
 
 
-async function interval(){
-    let code = await getCode(codeUrl + client_id)
-
-    console.log(code);
-    if(code === 'conti'){
-        setTimeout(interval, 1000)
-    }else{
-
-        let cookie = await getCode(authUrl + code);
-        let c = [];
-        for(let i = 0; i < cookie.length; i++){
-            c.push(cookie[i].split(';')[0])
-        }
-
-        signIn(c.join('; '))
-    }
-}
+// async function interval(){
+//     let code = await getCode(codeUrl + client_id)
+//
+//     console.log(code);
+//     if(code === 'conti'){
+//         setTimeout(interval, 1000)
+//     }else{
+//
+//         let cookie = await getCode(authUrl + code);
+//         let c = [];
+//         for(let i = 0; i < cookie.length; i++){
+//             c.push(cookie[i].split(';')[0])
+//         }
+//
+//         signIn(c.join('; '))
+//     }
+// }
 
 // let a = 0;
 // function getCode() {
@@ -94,6 +103,33 @@ async function interval(){
 //     }
 // }
 
-interval()
+// interval()
 
+
+async function sign(obj) {
+    let code = await getCode(codeUrl + obj.client_id)
+
+    if (code === 'conti') {
+        if(obj.startTime && Date.now() - obj.startTime > 1*60*1000){
+            console.log(`${obj.client_id} timeout, valid`);
+            return;
+        }
+        setTimeout(() => sign(obj), 1000)
+    } else {
+
+        let cookie = await getCode(authUrl + code);
+        let c = [];
+        for (let i = 0; i < cookie.length; i++) {
+            c.push(cookie[i].split(';')[0])
+        }
+
+        console.log(c.join('; '));
+        signIn(c.join('; '))
+    }
+}
+
+module.exports = {
+    getScanImage,
+    sign
+}
 
