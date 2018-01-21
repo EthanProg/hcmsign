@@ -124,7 +124,8 @@ async function sign(obj) {
         }
 
         console.log(c.join('; '));
-        signIn(c.join('; '))
+        signIn(c.join('; ')).then( v => console.log(v))
+            .catch(e => console.log(e))
     }
 }
 
