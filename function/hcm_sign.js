@@ -49,12 +49,12 @@ const sign = {
 function httpPost(body, op) {
 
     // console.log(options);
-    console.log(typeof body === 'object' ? JSON.stringify(body): body);
+    // console.log(typeof body === 'object' ? JSON.stringify(body): body);
     return new Promise( (resolve, reject) => {
         https.request(op || options, (res) => {
 
-            console.log(`STATUS: ${res.statusCode}`);
-            console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+            // console.log(`STATUS: ${res.statusCode}`);
+            // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
 
 
             if(res.statusCode == 301){
@@ -83,7 +83,7 @@ async function signIn(cookie) {
         })
     }
 
-    console.log("signIn")
+    // console.log("signIn")
     let check = await httpPost(body);
 
 

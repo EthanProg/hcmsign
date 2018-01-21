@@ -25,8 +25,8 @@ function getScanImage() {
                 r = r.join('');
                 let client_id = r.match(/client_id=(.+)\"/)[1];
                 let img = r.match(/<img src=\"(.+)\"/)[1];
-                console.log(img)
-
+                // console.log(img)
+                console.log(`${client_id} got , img ok`);
                 resolve({
                     client_id,
                     img
